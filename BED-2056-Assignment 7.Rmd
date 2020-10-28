@@ -1,0 +1,144 @@
+---
+title: "BED-2056-Assignment 7"
+author: "Sushmit Dhar"
+date: "`r format(Sys.time(), '%d %b %Y')`"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+##packages
+library(readr)
+library(tidyverse)
+library(lubridate)
+library(scales)
+
+# births2019 <-
+#  read_fwf("Nat2019PublicUS.c20200506.r20200915.txt",
+#           fwf_positions(start = c(9,13,475,504,23),
+#                         end = c(12,14,475,507,23),
+#                         col_names = c("Year","Month","Sex","Weight","Week")
+#           )
+#  )
+
+
+#save(births2019, file = "my_2019.Rda")
+
+
+#births2018 <-
+#  read_fwf("Nat2018PublicUS.c20190509.r20190717.txt",
+#           fwf_positions(start = c(9,13,475,504,23),
+#                        end = c(12,14,475,507,23),
+#                         col_names = c("Year","Month","Sex","Weight","Week")
+#           )
+#  )
+
+
+#save(births2018, file = "my_2018.Rda")
+
+#births2017 <-
+#  read_fwf("Nat2017PublicUS.c20180516.r20180808.txt",
+#           fwf_positions(start = c(9,13,475,504,23),
+#                         end = c(12,14,475,507,23),
+#                         col_names = c("Year","Month","Sex","Weight","Week")
+#           )
+#  )
+
+
+#save(births2017, file = "my_2017.Rda")
+
+#load(file = "my_2019.Rda")
+#load(file = "my_2018.Rda")
+#load(file = "my_2017.Rda")
+
+#df_1<- rbind(births2017,births2018,births2019)
+#df_1<-df_1 %>%  mutate(date = make_date(Year, Month))
+#save(df_1, file = "my_df.Rda")
+
+
+########## 1st
+
+##load(file = "my_df.Rda")
+
+##table1 <- as.table(table(df_1$Sex,df_1$date)) 
+##table1 <- data.frame(prop.table(table1)) 
+##table1 <- rename(table1,c('Gender'='Var1'))
+##table1$Var2 <- (as.Date(table1$Var2, format = "%Y-%m-%d"))
+##save(table1, file = "table1.Rda")
+
+#########2nd
+#load(file = "my_df.Rda")
+
+#table02 <- data.frame(df_1$Sex,df_1$date,df_1$Weight)
+#table02[table02 == 9999] <- NA
+#table02$df_1.Weight <- as.numeric(table02$df_1.Weight)
+
+#table2 <-   table02 %>%
+#  group_by(df_1.date,df_1.Sex) %>%
+#  summarize(Mean_weight = mean(df_1.Weight, na.rm = TRUE))
+
+#table2 <- rename(table2,c('Gender'='df_1.Sex','Date'='df_1.date'))
+#save(table2, file = "table2.Rda")
+
+#########3rd
+##load(file = "my_df.Rda")
+
+
+##table3 <- as.table(table(df_1$Sex,df_1$date,df_1$Week)) 
+##table3 <- data.frame(prop.table(table3)) 
+##table3 <- rename(table3,c('Gender'='Var1'))
+##table3$Var2 <- (as.Date(table3$Var2, format = "%Y-%m-%d"))
+##table3$Var3 <- recode(table3$Var3, 
+#                        "1"="Sun",
+#                        "2"="Mon",
+#                        "3"="Tue",
+#                        "4"="Wed",
+#                        "5"="Thu",
+#                        "6"="Fri",
+#                        "7"="Sat")
+
+##save(table3, file = "table3.Rda")
+
+load(file = "table1.Rda")
+load(file = "table2.Rda")
+load(file = "table3.Rda")
+
+
+```
+### 1st Plot
+
+```{r}
+
+ggplot(data = table1, aes(x=month(Var2, label=TRUE), y = Freq, color = Gender, group=Gender )) +
+  geom_line() +
+  facet_wrap(~ year(Var2))+ 
+labs(title = "Boy Girl Proportion by month",
+     x = "Month",
+     y = "Frequency")
+```
+
+### 2nd Plot
+
+```{r}
+ggplot(data = table2, aes(x=month(Date, label=TRUE), y = Mean_weight, color = Gender, group=Gender )) +
+  geom_line() +
+  facet_wrap(~ year(Date))+ 
+  labs(title = "The average birth weight in grams by gender",
+       x = "Month",
+       y = "Mean Weight(grams)")
+```
+
+### 3rd Plot
+
+```{r}
+
+ggplot(data = table3, aes(x=(Var3), y = Freq, color = Gender, group=Gender)) +
+  geom_line() +
+  facet_wrap(year(Var2)~ month(Var2, label=TRUE))+
+  labs(title = "Boy Girl Proportion by day of Birth",
+       x = "Weekday",
+       y = "Frequency")
+```
+
